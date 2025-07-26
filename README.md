@@ -1,217 +1,210 @@
 # Fruit-vagitable_classificaition
-Fruit & Vegetable Classification · Deep-Learning Project
-A complete overhaul of the repository README to follow industry-standard open-source style, document every stage of the workflow, make the project immediately usable by recruiters, students, and fellow developers.
+# 🥝 Fruit & Vegetable Classification · Deep Learning Project
 
-🌟 Overview
-This repository contains a production-ready computer-vision pipeline that classifies images of fruits and vegetables into 36 distinct classes using transfer learning (MobileNetV2/EfficientNet) and serves predictions through a lightweight Streamlit web app.
-Typical use-cases include
+*A complete, production-ready computer vision pipeline for classifying images of fruits and vegetables into 36 classes, featuring transfer learning and an interactive Streamlit app.*
 
-automated checkout kiosks,
+---
 
-quality-control lines in pack-houses, and
+## 🌟 Overview
 
-diet-tracking or agriculture teaching aids.
+This repository contains a production-ready computer-vision pipeline that classifies images of **fruits and vegetables into 36 distinct classes** using transfer learning (MobileNetV2/EfficientNet) and serves predictions through a lightweight Streamlit web app.
 
-📋 Table of Contents
-Project Demo
+**Use cases:**
+- Automated checkout kiosks
+- Quality-control lines in pack-houses
+- Diet tracking or agricultural teaching aids
 
-Features
+---
 
-Dataset
+## 📋 Table of Contents
+1. [Project Demo](#project-demo)
+2. [Features](#features)
+3. [Dataset](#dataset)
+4. [Model Architecture](#model-architecture)
+5. [Performance](#performance)
+6. [Quick Start](#quick-start)
+7. [Detailed Setup](#detailed-setup)
+8. [Project Structure](#project-structure)
+9. [Configuration](#configuration)
+10. [Training & Evaluation](#training--evaluation)
+11. [Streamlit App](#streamlit-app)
+12. [Deployment Guide](#deployment-guide)
+13. [Contributing](#contributing)
+14. [License](#license)
+15. [Contact](#contact)
 
-Model Architecture
+---
 
-Performance
+## 🎥 Project Demo
 
-Quick Start
+| Local Streamlit                 | Cloud (Community)           |
+|---------------------------------|-----------------------------|
+| `streamlit run app.py`          | https://fruit-veg-classifier.streamlit.app |
 
-Detailed Setup
+*A demonstration GIF is available in `/docs/demo.gif`.*
 
-Project Structure
+---
 
-Configuration
+## ✨ Features
+- End-to-end pipeline: data download → augmentation → training → evaluation → one-click web app
+- 36-class support (**10 fruits + 26 vegetables**)
+- Transfer learning backbone (EfficientNet-B0 by default) for **95%+ macro F1** on validation set
+- Modular training script (argparse/YAML config)
+- Real-time inference (< 60 ms on CPU) with class-probability bar-chart
+- Dockerfile & requirements-lock for reproducible builds
+- CI workflow (GitHub Actions) runs linting + unit tests on every PR
 
-Training & Evaluation
+---
 
-Streamlit App
+## 📊 Dataset
 
-Deployment Guide
+| Property                 | Value                                         |
+|--------------------------|-----------------------------------------------|
+| Source                   | [Kaggle – *Fruit & Vegetable Image Recognition*](https://www.kaggle.com/datasets)  |
+| Resolution (raw)         | 100 × 100 px (provided)                       |
+| Classes (36)             | Fruits (10) & Vegetables (26)                 |
+| Train / Val / Test split | 70% / 15% / 15%                           |
+| Augmentations            | Random flip / rotate / color-jitter / cutout  |
 
-Contributing
+> Need the data?  
+> Run: `python tools/download_dataset.py --kaggle` (requires Kaggle API token)
 
-License
+---
 
-Contact
+## 🏗️ Model Architecture
 
-Project Demo
-Local Streamlit	Cloud (Community)
-streamlit run app.py	https://fruit-veg-classifier.streamlit.app
-A short GIF demo is available in /docs/demo.gif.
 
-✨ Features
-End-to-end pipeline: data download → augmentation → training → evaluation → one-click web app
+---
+Key hyper-parameters live in `configs/base.yaml` and are CLI-overridable.
 
-36-class support (10 fruits + 26 vegetables)
+---
 
-Transfer-learning backbone (EfficientNet-B0 default) for 95%+ macro F1 on validation set
+## 📈 Performance
 
-Modular training script with argparse or YAML config
+| Metric (Test set) | Score  |
+|-------------------|--------|
+| Top-1 Accuracy    | 96.3%  |
+| Macro F1-score    | 95.8%  |
+| Model size        | 14 MB  |
+| Inference speed   | 57 ms / image (Ryzen 5 CPU) |
 
-Real-time inference (< 60 ms on CPU) with class-probability bar-chart
+Confusion matrix & training curves are auto-saved to `runs/` (see `/docs/metrics/`).
 
-Dockerfile & requirements-lock for reproducible builds
+---
 
-CI workflow (GitHub Actions) runs linting + unit tests on every PR
+## 🚀 Quick Start
 
-📊 Dataset
-Property	Value
-Source	Kaggle – Fruit & Vegetable Image Recognition
-Resolution (raw)	100 × 100 px (provided)
-Classes (36)	Fruits (10) & Vegetables (26)
-Train / Val / Test split	70% / 15% / 15%
-Augmentations	Random flip ╱ rotate ╱ color-jitter ╱ cutout
-Need the data? Run python tools/download_dataset.py --kaggle (requires a Kaggle API token).
 
-🏗️ Model Architecture
-text
-Input 224×224×3
-│
-├─ Data Augment (tf.keras.layers)
-│      ← random_flip, rotation, contrast, cutout
-│
-├─ Base CNN (transfer-learn)
-│   └─ MobileNetV2 / EfficientNet-B0 (imagenet weights, frozen N layers)
-│
-├─ GlobalAvgPool2D
-├─ Dropout (0.35)
-└─ Dense (36 classes, softmax)
-Key hyper-parameters are stored in configs/base.yaml and can be overridden from the CLI.
+---
 
-📈 Performance
-Metric (Test set)	Score
-Top-1 Accuracy	96.3%
-Macro F1-score	95.8%
-Model size	14 MB
-Inference speed	57 ms / image on Ryzen 5 CPU
-Confusion matrix & training curves are saved automatically to runs/ (see example in /docs/metrics/).
+## ⚙️ Detailed Setup
 
-🚀 Quick Start
-bash
-# 1️⃣ Clone & install
-git clone https://github.com/amanjigithub/Fruit-vagitable_classificaition.git
-cd Fruit-vagitable_classificaition
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+### Prerequisites
+* Python 3.9+
+* pip / conda
+* (Optional) NVIDIA GPU + CUDA 11 for faster training
+* Kaggle API token (for automatic data download)
 
-# 2️⃣ Download data (≈ 95 MB after unzip)
-python tools/download_dataset.py --kaggle
+### Environment Setup
 
-# 3️⃣ Train
-python src/train.py --config configs/base.yaml
 
-# 4️⃣ Run Streamlit demo
-streamlit run app.py
-⚙️ Detailed Setup
-Prerequisites
-Python 3.9+
+---
 
-pip / conda
+## ⚙️ Configuration
 
-(Optional) NVIDIA GPU + CUDA 11 for faster training
+All tunables are in `configs/`. Common flags:
 
-Kaggle API token if you wish to auto-download the dataset
+| Flag                    | Default  | Description                                    |
+|-------------------------|----------|------------------------------------------------|
+| `model.name`            | effnet   | Base network: `mobilenet`, `effnet`, `resnet50`|
+| `training.epochs`       | 25       | Training epochs                                |
+| `training.batch_size`   | 32       | Mini-batch size                                |
+| `dataset.img_size`      | 224      | Resize dimension                               |
+| `optim.lr_initial`      | 1e-3     | Initial learning rate (Adam)                   |
 
-Environment
-bash
-conda env create -f environment.yml   # or use .venv as above
-conda activate fruit-veg-cls
-pre-commit install                    # hooks: black, isort, flake8
-Configuration
-All tunables live in configs/. Common flags:
+CLI Override Example:
 
-Flag	Default	Description
-model.name	effnet	Base network: mobilenet, effnet, resnet50
-training.epochs	25	Total training epochs
-training.batch_size	32	Mini-batch size
-dataset.img_size	224	Resize dimension
-optim.lr_initial	1e-3	Initial learning rate (Adam)
-Override from CLI:
+---
 
-bash
-python src/train.py --config configs/base.yaml training.epochs=50 model.name=mobilenet
-🏗️ Project Structure
-text
+## 🗂️ Project Structure
+
 Fruit-vagitable_classificaition/
 │
-├── data/                     # (git-ignored) raw & processed images
-├── src/                      # All source code
-│   ├── datasets/             # Data preparation & loaders
-│   ├── models/               # Model definitions & factory
-│   ├── train.py              # Main training entry-point
-│   ├── predict.py            # Single-image / batch inference
-│   └── utils/                # Helpers, metrics, logging
+├── data/ # (git-ignored) raw & processed images 
+├── src/ # All source code
+│ ├── datasets/ # Data preparation & loaders
+│ ├── models/ # Model definitions & factory
+│ ├── train.py # Main training entry-point
+│ ├── predict.py # Single-image / batch inference
+│ └── utils/ # Helpers, metrics, logging
 │
-├── app.py                    # Streamlit web interface
-├── configs/                  # YAML hyper-parameter sets
-├── Dockerfile                # Container for production
-├── tests/                    # Unit tests (pytest)
-├── requirements.txt          # Pinned runtime deps
-├── environment.yml           # Conda equivalent
-└── README.md                 # ← you are here
-🏋️‍♂️ Training & Evaluation
-Data preparation
+├── app.py # Streamlit web interface
+├── configs/ # YAML hyper-parameter sets
+├── Dockerfile # Container for production
+├── tests/ # Unit tests (pytest)
+├── requirements.txt # Pinned runtime deps
+├── environment.yml # Conda equivalent
+└── README.md # ← you are here
 
-bash
-python src/datasets/make_tfrecords.py --img_size 224
-Training
-TensorBoard logs (--logdir runs/) include LR-finder, aug-samples, and per-class metrics.
 
-Evaluation
 
-bash
-python src/predict.py --weights runs/best_model.h5 --source data/test/orange.jpg
-Returns JSON { "class": "Orange", "probability": 0.994 }
+---
 
-🎛️ Streamlit App
-bash
-streamlit run app.py
-Functions
+## 🏋️‍♂️ Training & Evaluation
 
-Upload any .jpg/.png or capture via webcam
+1. **Data preparation**  
+2. **Training**  
+TensorBoard logs (`--logdir runs/`) include LR-finder, aug-samples, per-class metrics.
+3. **Evaluation**  
+Returns:  
+`{ "class": "Orange", "probability": 0.994 }`
 
-Top-K chart shows probabilities across all 36 classes
+---
 
-Model info pane displays version, input size, FPS, GPU usage
+## 🎛️ Streamlit App
 
-☁️ Deployment Guide
-Docker
-bash
-docker build -t fruit-veg-cls .
-docker run -p 8501:8501 fruit-veg-cls
-Streamlit Cloud
-Push repo to GitHub
 
-Create new app in share.streamlit.io pointing to app.py
+Features:
+- **Upload** any `.jpg/.png` or capture via webcam
+- **Top-K chart**: probabilities over 36 classes
+- **Model info**: version, input size, FPS, GPU usage
 
-Set environment variable DATA_DIR to ~/.cache/fruitveg/ (auto-download)
+---
 
-For Heroku/Fly .io, see /deploy/ templates.
+## ☁️ Deployment Guide
 
-🤝 Contributing
-Have an idea for new augmentations, backbone support or UI tweaks? Great!
+### Docker
 
-Fork → create feature branch (git checkout -b feat/my-feature)
+### Streamlit Cloud
+1. Push repo to GitHub
+2. Create new app in **share.streamlit.io** pointing to `app.py`
+3. Set env var `DATA_DIR` to `~/.cache/fruitveg/` (auto-download)
 
-Run make test and ensure 0% lint errors
+> For Heroku/Fly.io etc., see `/deploy/` templates.
 
-Submit a PR; CI will run style checks and unit tests automatically.
+---
 
-Please read CONTRIBUTING.md for the full workflow & code-style guide.
+## 🤝 Contributing
 
-📜 License
-Distributed under the MIT License. See LICENSE for full text.
+Have an idea? Want more augmentations, model support, UI tweaks?  
+1. Fork → branch (`git checkout -b feat/my-feature`)
+2. Run `make test` (ensure 0% lint errors)
+3. Submit PR; CI runs style checks and unit tests
 
-📞 Contact
-Aman Badhautiya – aman93977@gmail.com
-Project Link: https://github.com/amanjigithub/Fruit-vagitable_classificaition
+See `CONTRIBUTING.md` for full workflow and code style.
 
+---
+
+## 📜 License
+
+Distributed under the **MIT License**.  
+See `LICENSE` for details.
+
+---
+
+## 📞 Contact
+
+**Aman Badhautiya** – [aman93977@gmail.com](mailto:aman93977@gmail.com)  
+Project Link: [github.com/amanjigithub/Fruit-vagitable_classificaition](https://github.com/amanjigithub/Fruit-vagitable_classificaition)
+
+> Built with ❤️ & TensorFlow. If this project helps you, please ⭐ the repo and share the demo!
